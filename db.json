@@ -1,0 +1,22 @@
+{
+  "schedules": [
+    {
+      "id": 1,
+      "title": "Daily Status",
+      "description": "Dialy ",
+      "subject": "Daily Status",
+      "frequency": "Monthly",
+      "repeat": "",
+      "time": ""
+    },
+    {
+      "id": 1,
+      "title": "MOM",
+      "description": "Minutes of Meeting",
+      "subject": "Daily Status",
+      "frequency": "Daily",
+      "repeat": "M",
+      "time": ""
+    }
+  ]
+}
