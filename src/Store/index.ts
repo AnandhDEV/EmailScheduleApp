@@ -6,8 +6,8 @@ export const store = configureStore({
   reducer: { emailschedule },
 });
 
-type Appdispatch = typeof store.dispatch;
+export type Appdispatch = typeof store.dispatch;
 export const useAppDispatch = () => useDispatch<Appdispatch>();
 
-type RootState = ReturnType<typeof store.getState>;
+export type RootState = ReturnType<typeof store.getState>;
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;

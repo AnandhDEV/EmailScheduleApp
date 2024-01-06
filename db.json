@@ -3,11 +3,11 @@
     {
       "id": 1,
       "title": "Daily Status",
-      "description": "Dialy ",
+      "description": "Status Mail that updates the task status of Day",
       "subject": "Daily Status",
-      "frequency": "Monthly",
+      "frequency": "Daily",
       "repeat": "",
-      "time": ""
+      "time": "6:00 PM"
     },
     {
       "id": 1,
@@ -15,8 +15,17 @@
       "description": "Minutes of Meeting",
       "subject": "Daily Status",
       "frequency": "Daily",
-      "repeat": "M",
-      "time": ""
+      "repeat": "",
+      "time": "1:00 PM"
+    },
+    {
+      "id": "6d0915b7-01ec-49ab-9e11-1202225a50c1",
+      "title": "Test weekly",
+      "description": "test",
+      "subject": "test",
+      "frequency": "Weekly",
+      "repeat": "Tuesday",
+      "time": "6:00 AM"
     }
   ]
 }

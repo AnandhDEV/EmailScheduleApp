@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { DomainURL } from "../../Utils/constants";
 import { scheduleType } from "../../Types/schedules";
+import { Appdispatch } from "..";
 
 const initialState = {
   scheduleList: [] as scheduleType[],
@@ -12,16 +13,16 @@ const initialState = {
 
 export const fetchSchedules = createAsyncThunk(
   "appConfig/fetchConfig",
-  async (params) => {
+  async () => {
     const response = await axios.get(DomainURL + "schedules");
-
-    return response.data;
+    return response.data ?? [];
   }
 );
 
 export const addSchedules = createAsyncThunk(
   "appConfig/addConfig",
-  async (data, { getState, dispatch }) => {
+  async (data: scheduleType, { getState, dispatch: appDispatch }: any) => {
+    const dispatch = appDispatch as Appdispatch;
     const response = await axios.post(DomainURL + "schedules", data);
     dispatch(fetchSchedules());
 
@@ -30,9 +31,22 @@ export const addSchedules = createAsyncThunk(
 );
 
 export const updateSchedules = createAsyncThunk(
-  "appConfig/addConfig",
-  async (data, { getState, dispatch }) => {
-    const response = await axios.post(DomainURL + "schedules", data);
+  "appConfig/updateConfig",
+  async (data: scheduleType, { getState, dispatch: appDispatch }) => {
+    const dispatch = appDispatch as Appdispatch;
+
+    const response = await axios.put(DomainURL + `schedules/${data.id}`, data);
+    dispatch(fetchSchedules());
+
+    return response;
+  }
+);
+export const removeSchedule = createAsyncThunk(
+  "appConfig/removeConfig",
+  async (id: string | number, { getState, dispatch: appDispatch }) => {
+    const dispatch = appDispatch as Appdispatch;
+
+    const response = await axios.delete(DomainURL + `schedules/${id}`);
     dispatch(fetchSchedules());
 
     return response;

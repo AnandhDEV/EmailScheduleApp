@@ -10,7 +10,7 @@ const SideBar = styled(Box)(({ theme }) => ({
   position: "absolute",
   top: 0,
   zIndex: 20,
-}));
+})) as typeof Box;
 
 const ContentContainer = styled(Box)(({ theme }) => ({
   width: "100%",
@@ -18,13 +18,13 @@ const ContentContainer = styled(Box)(({ theme }) => ({
   padding: "20px",
   paddingRight: "50px",
   marginLeft: "5%",
-}));
+})) as typeof Box;
 
 const TopBar = styled(Box)(({ theme }) => ({
   width: "100%",
   height: "6vh",
   backgroundColor: theme.palette.secondary.main,
-}));
+})) as typeof Box;
 
 function Layout({ children }: layoutProps) {
   return (

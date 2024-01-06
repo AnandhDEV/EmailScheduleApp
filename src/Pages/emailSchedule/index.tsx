@@ -1,43 +1,61 @@
 import {
-  Box,
   Button,
-  FormControl,
-  InputLabel,
   Menu,
-  MenuItem,
-  Select,
   SelectChangeEvent,
   Stack,
   TextField,
-  Typography,
 } from "@mui/material";
 import React, { useDeferredValue, useEffect, useMemo, useState } from "react";
 import ListView from "./listView";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import ControlPointOutlinedIcon from "@mui/icons-material/ControlPointOutlined";
 import { useAppDispatch, useAppSelector } from "../../Store";
-import { fetchSchedules } from "../../Store/emailSchedule";
+import {
+  addSchedules,
+  fetchSchedules,
+  setIsEdit,
+  updateSchedules,
+} from "../../Store/emailSchedule";
 import { scheduleType } from "../../Types/schedules";
 import Fade from "@mui/material/Fade";
-import { styled } from "@mui/material/styles";
-import { frequencyList, repeatmonthly, timelist } from "../../Utils/constants";
-
-const FormContainer = styled(Box)(({ theme }) => ({
-  width: "400px",
-  padding: "20px",
-  display: "flex",
-  flexDirection: "column",
-  gap: "15px",
-}));
+import FormContainer from "./formContainer";
+import { v4 as uuidv4 } from "uuid";
+import PreLoader from "../../Component/backDropLoader";
+import CustomSnackBar from "../../Component/SnackBar";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 const initialSchedule = {
-  id: 0,
+  id: "",
   title: "",
   description: "",
   subject: "",
   frequency: "",
   repeat: "",
   time: "",
+};
+
+const initialSnack = {
+  openSnack: false,
+  message: "",
+  severity: "success",
+};
+
+const successAddSnack = {
+  openSnack: true,
+  message: "Succesfully Created Schedule",
+  severity: "success",
+};
+
+const successUpdateSnack = {
+  openSnack: true,
+  message: "Succesfully Updated Schedule",
+  severity: "success",
+};
+
+const errorSnack = {
+  openSnack: true,
+  message: "Something went wrong",
+  severity: "error",
 };
 
 function EmailSchedule() {
@@ -47,13 +65,20 @@ function EmailSchedule() {
     dispatch(fetchSchedules());
   }, []);
 
-  const { scheduleList, isEdit } = useAppSelector(
+  const { scheduleList, isEdit, loader } = useAppSelector(
     (state) => state.emailschedule
   );
-
   const [searchQuery, setSearchQuery] = useState("");
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [scheduleData, setScheduleData] = useState(initialSchedule);
+  const [scheduleData, setScheduleData] =
+    useState<scheduleType>(initialSchedule);
+  const [error, setError] = useState(false);
+  const [snack, setSnack] = useState({
+    openSnack: false,
+    message: "",
+    severity: "success",
+  });
+  const { openSnack, message, severity } = snack;
 
   const open = Boolean(anchorEl);
   const deferredQuery = useDeferredValue(searchQuery);
@@ -74,12 +99,19 @@ function EmailSchedule() {
     [deferredQuery, scheduleList]
   );
 
+  const handleCloseSnack = () => {
+    setSnack(initialSnack);
+  };
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
 
   const handleReset = () => {
+    setAnchorEl(null);
     setScheduleData(initialSchedule);
+    dispatch(setIsEdit(false));
+    setError(false);
   };
 
   const handleChange = (
@@ -97,14 +129,62 @@ function EmailSchedule() {
 
   const handleClose = () => {
     setAnchorEl(null);
+    handleReset();
   };
 
   const handleSubmit = () => {
-    let error = false;
+    const { title, description, subject, frequency, repeat, time } =
+      scheduleData;
+
+    if (
+      title &&
+      description &&
+      subject &&
+      time &&
+      ((frequency === "Weekly" && repeat) ||
+        (frequency === "Monthly" && repeat) ||
+        frequency === "Daily")
+    ) {
+      if (isEdit) {
+        dispatch(
+          updateSchedules({
+            ...scheduleData,
+            repeat: frequency === "Daily" ? "" : scheduleData.repeat,
+          })
+        )
+          .then(unwrapResult)
+          .then(() => {
+            handleReset();
+            setSnack(successUpdateSnack);
+          })
+          .catch(() => {
+            setSnack(errorSnack);
+          });
+      } else {
+        dispatch(
+          addSchedules({
+            ...scheduleData,
+            repeat: frequency === "Daily" ? "" : scheduleData.repeat,
+            id: uuidv4(),
+          })
+        )
+          .then(unwrapResult)
+          .then(() => {
+            handleReset();
+            setSnack(successAddSnack);
+          })
+          .catch(() => {
+            setSnack(errorSnack);
+          });
+      }
+    } else {
+      setError(true);
+    }
   };
 
   return (
     <>
+      <PreLoader open={loader} />
       <Stack direction={"row"} justifyContent={"space-between"} mb={2}>
         <TextField
           value={searchQuery}
@@ -148,140 +228,21 @@ function EmailSchedule() {
           horizontal: "right",
         }}
       >
-        <FormContainer>
-          <Typography variant="h6">
-            {isEdit ? "Add Schedule" : "Edit Schedule"}
-          </Typography>
-          <Stack
-            direction={"row"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <Typography variant="subtitle1">Title</Typography>
-            <TextField
-              name="title"
-              sx={{
-                width: "250px",
-              }}
-              value={scheduleData.title}
-              onChange={handleChange}
-              size="small"
-            />
-          </Stack>
-          <Stack
-            direction={"row"}
-            justifyContent={"space-between"}
-            alignItems={"flex-start"}
-
-            // gap={10}
-          >
-            <Typography variant="subtitle1">Description</Typography>
-            <TextField
-              name="description"
-              multiline
-              rows={2}
-              sx={{
-                width: "250px",
-              }}
-              value={scheduleData.description}
-              onChange={handleChange}
-              size="small"
-            />
-          </Stack>
-          <Stack
-            direction={"row"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-            // gap={10}
-          >
-            <Typography variant="subtitle1">Subject</Typography>
-            <TextField
-              name="subject"
-              sx={{
-                width: "250px",
-              }}
-              value={scheduleData.subject}
-              onChange={handleChange}
-              size="small"
-            />
-          </Stack>
-          <Stack
-            direction={"row"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <Typography variant="subtitle1">Frequency</Typography>
-
-            <FormControl sx={{ width: "250px" }} size="small">
-              <Select
-                value={scheduleData.frequency}
-                onChange={handleChange}
-                name="frequency"
-              >
-                {frequencyList.map((item: string) => (
-                  <MenuItem key={item} value={item}>
-                    {item}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Stack>
-          <Stack
-            direction={"row"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <Typography variant="subtitle1">Repeat</Typography>
-
-            <FormControl size="small" sx={{ width: "250px" }}>
-              <Select
-                value={scheduleData.repeat}
-                onChange={handleChange}
-                name="repeat"
-              >
-                {repeatmonthly.map((item: string) => (
-                  <MenuItem key={item} value={item}>
-                    {item}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Stack>
-          <Stack
-            direction={"row"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <Typography variant="subtitle1">Time</Typography>
-
-            <FormControl sx={{ width: "250px" }} size="small">
-              <Select value={""} onChange={handleChange} name="time">
-                {timelist.map((item: string) => (
-                  <MenuItem key={item} value={item}>
-                    {item}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Stack>
-
-          <Stack
-            direction={"row"}
-            gap={"10px"}
-            justifyContent={"flex-end"}
-            mt={1}
-          >
-            <Button
-              variant="contained"
-              color="secondary"
-              sx={{ color: "primary.main" }}
-            >
-              Cancel
-            </Button>
-            <Button variant="contained">{isEdit ? "Done" : "Update"}</Button>
-          </Stack>
-        </FormContainer>
+        <FormContainer
+          handleChange={handleChange}
+          scheduleData={scheduleData}
+          handleSubmit={handleSubmit}
+          handleClose={handleClose}
+          error={error}
+        />
       </Menu>
+
+      <CustomSnackBar
+        open={openSnack}
+        message={message}
+        severity={severity}
+        handleClose={handleCloseSnack}
+      />
     </>
   );
 }

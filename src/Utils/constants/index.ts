@@ -29,31 +29,31 @@ export const repeatmonthly = ["First Monday", "Last Friday"];
 
 export const repeatweekly = [
   {
-    id: "sunday",
+    id: "Sunday",
     name: "S",
   },
   {
-    id: "monday",
+    id: "Monday",
     name: "M",
   },
   {
-    id: "tuesday",
+    id: "Tuesday",
     name: "T",
   },
   {
-    id: "wednesday",
+    id: "Wednesday",
     name: "W",
   },
   {
-    id: "thursday",
+    id: "Thursday",
     name: "T",
   },
   {
-    id: "friday",
+    id: "Friday",
     name: "F",
   },
   {
-    id: "saturday",
+    id: "Saturday",
     name: "S",
   },
 ];
