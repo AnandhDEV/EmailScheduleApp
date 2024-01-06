@@ -217,7 +217,6 @@ function EmailSchedule() {
         }}
         anchorEl={anchorEl}
         open={open}
-        onClose={handleClose}
         TransitionComponent={Fade}
         anchorOrigin={{
           vertical: "bottom",

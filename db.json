@@ -1,31 +1,31 @@
 {
   "schedules": [
     {
-      "id": 1,
-      "title": "Daily Status",
-      "description": "Status Mail that updates the task status of Day",
+      "id": "3791fe01-d14b-4615-86de-b94a20be34ea",
+      "title": "Daily",
+      "description": "Daily Schedule Mail for Project Status",
       "subject": "Daily Status",
       "frequency": "Daily",
       "repeat": "",
-      "time": "6:00 PM"
+      "time": "10:00 AM"
     },
     {
-      "id": 1,
-      "title": "MOM",
-      "description": "Minutes of Meeting",
-      "subject": "Daily Status",
-      "frequency": "Daily",
-      "repeat": "",
-      "time": "1:00 PM"
-    },
-    {
-      "id": "6d0915b7-01ec-49ab-9e11-1202225a50c1",
-      "title": "Test weekly",
-      "description": "test",
-      "subject": "test",
+      "id": "dcfaa30d-89fa-466b-9f28-de2c4e094a9c",
+      "title": "Weekly",
+      "description": "Weekly Schedule for Project Status",
+      "subject": "Status",
       "frequency": "Weekly",
-      "repeat": "Tuesday",
-      "time": "6:00 AM"
+      "repeat": "Monday",
+      "time": "10:00 AM"
+    },
+    {
+      "id": "1518877d-9327-4530-afe1-abd7be447bb7",
+      "title": "Monthly",
+      "description": "Monthly Schedule for Project",
+      "subject": "Monthly Status",
+      "frequency": "Monthly",
+      "repeat": "Last Friday",
+      "time": "6:00 PM"
     }
   ]
 }
